@@ -1,0 +1,90 @@
+:root {
+  --bg: #EDEFEC;
+  --ink: #16211F;
+  --signal: #2FA8A0;
+  --pulse: #E85C2B;
+  --line: #C7CBC3;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html, body {
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--font-body);
+  -webkit-font-smoothing: antialiased;
+}
+
+a {
+  color: inherit;
+}
+
+.shell {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 4rem 1.5rem;
+}
+
+.eyebrow {
+  font-family: var(--font-display);
+  font-size: 0.75rem;
+  text-transform: lowercase;
+  letter-spacing: 0.05em;
+  color: var(--signal);
+}
+
+.hero h1 {
+  font-family: var(--font-display);
+  font-size: clamp(3rem, 8vw, 5rem);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  margin: 0.5rem 0;
+}
+
+.tagline {
+  font-size: 1.1rem;
+  max-width: 40ch;
+  opacity: 0.85;
+}
+
+.hairline {
+  margin: 3rem 0;
+  border: none;
+  border-top: 1px solid var(--line);
+}
+
+.map-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+}
+
+.map-caption {
+  font-family: var(--font-display);
+  font-size: 0.8rem;
+  opacity: 0.6;
+}
+
+.constellation {
+  width: 100%;
+  max-width: 480px;
+  height: auto;
+}
+
+.thread {
+  stroke: var(--line);
+  stroke-width: 0.3;
+}
+
+.node {
+  fill: var(--signal);
+}
+
+.node-self {
+  fill: var(--pulse);
+}
