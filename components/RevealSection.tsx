@@ -10,16 +10,18 @@ export default function RevealSection() {
     offset: ["start start", "end end"],
   });
 
-  const node1Opacity = useTransform(scrollYProgress, [0, 0.1], [0, 1]);
-  const node1Scale = useTransform(scrollYProgress, [0, 0.1], [0.5, 1]);
+  const node1Opacity = useTransform(scrollYProgress, [0, 0.08], [0, 1]);
+  const node1Scale = useTransform(scrollYProgress, [0, 0.08], [0.5, 1]);
 
-  const line1Progress = useTransform(scrollYProgress, [0.15, 0.35], [0, 1]);
-  const node2Opacity = useTransform(scrollYProgress, [0.3, 0.4], [0, 1]);
-  const node2Scale = useTransform(scrollYProgress, [0.3, 0.4], [0.5, 1]);
+  // line and its target node now share the exact same scroll range,
+  // so the line always finishes drawing at the same instant the node lands
+  const line1Progress = useTransform(scrollYProgress, [0.14, 0.34], [0, 1]);
+  const node2Opacity = useTransform(scrollYProgress, [0.14, 0.34], [0, 1]);
+  const node2Scale = useTransform(scrollYProgress, [0.14, 0.34], [0.4, 1]);
 
-  const line2Progress = useTransform(scrollYProgress, [0.45, 0.65], [0, 1]);
-  const node3Opacity = useTransform(scrollYProgress, [0.6, 0.7], [0, 1]);
-  const node3Scale = useTransform(scrollYProgress, [0.6, 0.7], [0.5, 1]);
+  const line2Progress = useTransform(scrollYProgress, [0.44, 0.64], [0, 1]);
+  const node3Opacity = useTransform(scrollYProgress, [0.44, 0.64], [0, 1]);
+  const node3Scale = useTransform(scrollYProgress, [0.44, 0.64], [0.4, 1]);
 
   const captionOpacity = useTransform(scrollYProgress, [0.78, 0.92], [0, 1]);
   const captionY = useTransform(scrollYProgress, [0.78, 0.92], [16, 0]);
@@ -31,12 +33,14 @@ export default function RevealSection() {
           <motion.line
             x1="50" y1="50" x2="20" y2="20"
             className="reveal-line"
-            style={{ pathLength: line1Progress }}
+            style={{ pathLength: line1Progress, vectorEffect: "non-scaling-stroke" }}
+            strokeLinecap="round"
           />
           <motion.line
             x1="50" y1="50" x2="80" y2="25"
             className="reveal-line"
-            style={{ pathLength: line2Progress }}
+            style={{ pathLength: line2Progress, vectorEffect: "non-scaling-stroke" }}
+            strokeLinecap="round"
           />
         </svg>
 
