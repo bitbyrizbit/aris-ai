@@ -27,16 +27,23 @@ export default function UploadPanel({
   const [text, setText] = useState("");
   const [results, setResults] = useState<DeviceResult[]>([]);
   const [running, setRunning] = useState(false);
+  const [incomingTask, setIncomingTask] = useState<
+    { fromPeer: string; status: "processing" | "done" } | null
+  >(null);
   const fileRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     if (!incoming) return;
     const { peerId, data } = incoming;
 
-    if (data?.type === "chunk" && workerStatus === "ready") {
-      summarize(data.text).then((summary) => {
-        sendTo(peerId, { type: "result", summary });
-      });
+    if (data?.type === "chunk") {
+      setIncomingTask({ fromPeer: peerId, status: "processing" });
+      if (workerStatus === "ready") {
+        summarize(data.text).then((summary) => {
+          sendTo(peerId, { type: "result", summary });
+          setIncomingTask({ fromPeer: peerId, status: "done" });
+        });
+      }
     }
 
     if (data?.type === "result") {
@@ -97,11 +104,19 @@ export default function UploadPanel({
 
   return (
     <div className="upload-panel">
+      {incomingTask && (
+        <div className={`incoming-banner incoming-${incomingTask.status}`}>
+          {incomingTask.status === "processing"
+            ? `Task received from ${incomingTask.fromPeer.slice(0, 9)} — processing your portion…`
+            : `Done — your summary was sent back to ${incomingTask.fromPeer.slice(0, 9)}.`}
+        </div>
+      )}
+
       <div className="upload-row">
         <input
           ref={fileRef}
           type="file"
-          accept=".txt"
+          accept=".txt,.md"
           onChange={handleFile}
           className="upload-file-input"
           id="file-upload"
@@ -136,7 +151,7 @@ export default function UploadPanel({
           {results.map((r) => (
             <div key={r.deviceId} className="result-row">
               <span className="result-device">
-                {r.deviceId === myId ? "this device" : r.deviceId.slice(0, 8)}
+                {r.deviceId === myId ? "this device" : r.deviceId.slice(0, 9)}
               </span>
               <span className={`result-status status-${r.status}`}>{r.status}</span>
               {r.summary && <p className="result-summary">{r.summary}</p>}
