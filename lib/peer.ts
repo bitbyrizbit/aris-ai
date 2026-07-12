@@ -2,64 +2,122 @@ import Peer, { DataConnection } from "peerjs";
 
 export type PeerEventHandlers = {
   onOpen?: (id: string) => void;
+  onIncomingRequest?: (peerId: string) => void;
+  onWaitingApproval?: (peerId: string) => void;
   onPeerConnect?: (peerId: string) => void;
   onPeerDisconnect?: (peerId: string) => void;
   onError?: (message: string) => void;
   onData?: (peerId: string, data: unknown) => void;
 };
 
+function generateRoomCode(): string {
+  const num = Math.floor(1000 + Math.random() * 9000);
+  return `ARIS-${num}`;
+}
+
 export class ArisNetwork {
-  peer: Peer;
+  peer!: Peer;
   connections: Map<string, DataConnection> = new Map();
+  private pendingIncoming: Map<string, DataConnection> = new Map();
   private handlers: PeerEventHandlers;
 
   constructor(handlers: PeerEventHandlers = {}) {
     this.handlers = handlers;
+    this.initPeer(generateRoomCode());
+  }
 
-    this.peer = new Peer({
+  private initPeer(id: string) {
+    this.peer = new Peer(id, {
       host: process.env.NEXT_PUBLIC_PEER_HOST,
       port: Number(process.env.NEXT_PUBLIC_PEER_PORT || 443),
       path: process.env.NEXT_PUBLIC_PEER_PATH || "/aris",
       secure: process.env.NEXT_PUBLIC_PEER_SECURE !== "false",
     });
 
-    this.peer.on("open", (id) => this.handlers.onOpen?.(id));
-    this.peer.on("connection", (conn) => this.registerConnection(conn));
-    this.peer.on("error", (err) => this.handlers.onError?.(err.message));
-  }
+    this.peer.on("open", (openId) => this.handlers.onOpen?.(openId));
 
-  private registerConnection(conn: DataConnection) {
-    conn.on("open", () => {
-      this.connections.set(conn.peer, conn);
-      this.handlers.onPeerConnect?.(conn.peer);
+    this.peer.on("connection", (conn) => {
+      this.pendingIncoming.set(conn.peer, conn);
+      this.handlers.onIncomingRequest?.(conn.peer);
+
+      conn.on("data", (data: any) => {
+        if (data?.type === "__handshake_accept") return;
+        this.handlers.onData?.(conn.peer, data);
+      });
+
+      conn.on("close", () => {
+        this.pendingIncoming.delete(conn.peer);
+        this.connections.delete(conn.peer);
+        this.handlers.onPeerDisconnect?.(conn.peer);
+      });
     });
 
-    conn.on("data", (data) => {
+    this.peer.on("error", (err: any) => {
+      if (err.type === "unavailable-id") {
+        this.initPeer(generateRoomCode());
+        return;
+      }
+      this.handlers.onError?.(err.message || "Connection error");
+    });
+  }
+
+  acceptIncoming(peerId: string) {
+    const conn = this.pendingIncoming.get(peerId);
+    if (!conn) return;
+    this.pendingIncoming.delete(peerId);
+    this.connections.set(peerId, conn);
+    conn.send({ type: "__handshake_accept" });
+    this.handlers.onPeerConnect?.(peerId);
+  }
+
+  declineIncoming(peerId: string) {
+    const conn = this.pendingIncoming.get(peerId);
+    if (!conn) return;
+    conn.close();
+    this.pendingIncoming.delete(peerId);
+  }
+
+  join(roomCode: string) {
+    const code = roomCode.trim();
+    if (!code) return;
+
+    const conn = this.peer.connect(code, { reliable: true });
+    this.handlers.onWaitingApproval?.(conn.peer);
+
+    const failTimeout = setTimeout(() => {
+      if (!this.connections.has(conn.peer)) {
+        this.handlers.onError?.("No response from that room code. Check it and try again.");
+      }
+    }, 12000);
+
+    conn.on("data", (data: any) => {
+      if (data?.type === "__handshake_accept") {
+        clearTimeout(failTimeout);
+        this.connections.set(conn.peer, conn);
+        this.handlers.onPeerConnect?.(conn.peer);
+        return;
+      }
       this.handlers.onData?.(conn.peer, data);
     });
 
     conn.on("close", () => {
+      clearTimeout(failTimeout);
       this.connections.delete(conn.peer);
       this.handlers.onPeerDisconnect?.(conn.peer);
     });
 
     conn.on("error", () => {
-      this.connections.delete(conn.peer);
-      this.handlers.onPeerDisconnect?.(conn.peer);
+      clearTimeout(failTimeout);
+      this.handlers.onError?.("That room code isn't reachable. Check it and try again.");
     });
-  }
-
-  join(roomCode: string) {
-    const conn = this.peer.connect(roomCode, { reliable: true });
-    this.registerConnection(conn);
   }
 
   broadcast(data: unknown) {
     this.connections.forEach((conn) => conn.send(data));
   }
+
   sendTo(peerId: string, data: unknown) {
-    const conn = this.connections.get(peerId);
-    conn?.send(data);
+    this.connections.get(peerId)?.send(data);
   }
 
   get id() {

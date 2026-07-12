@@ -11,6 +11,9 @@ export function useAris(onData?: (peerId: string, data: unknown) => void) {
   const [peers, setPeers] = useState<string[]>([]);
   const [status, setStatus] = useState<ArisStatus>("connecting");
   const [joinError, setJoinError] = useState("");
+  const [joinSuccess, setJoinSuccess] = useState(false);
+  const [waitingApproval, setWaitingApproval] = useState(false);
+  const [incomingRequests, setIncomingRequests] = useState<string[]>([]);
   const onDataRef = useRef(onData);
   onDataRef.current = onData;
 
@@ -20,20 +23,28 @@ export function useAris(onData?: (peerId: string, data: unknown) => void) {
         setMyId(id);
         setStatus("ready");
       },
-      onPeerConnect: (peerId) => {
+      onIncomingRequest: (peerId) => {
+        setIncomingRequests((prev) => (prev.includes(peerId) ? prev : [...prev, peerId]));
+      },
+      onWaitingApproval: () => {
+        setWaitingApproval(true);
         setJoinError("");
+        setJoinSuccess(false);
+      },
+      onPeerConnect: (peerId) => {
+        setWaitingApproval(false);
+        setJoinError("");
+        setJoinSuccess(true);
+        setIncomingRequests((prev) => prev.filter((p) => p !== peerId));
         setPeers((prev) => (prev.includes(peerId) ? prev : [...prev, peerId]));
+        setTimeout(() => setJoinSuccess(false), 2500);
       },
       onPeerDisconnect: (peerId) => {
         setPeers((prev) => prev.filter((p) => p !== peerId));
       },
       onError: (message) => {
-        setStatus("error");
-        setJoinError(
-          message.includes("Could not connect")
-            ? "That room code isn't reachable — check it and try again."
-            : "Connection issue — check your network and try again."
-        );
+        setWaitingApproval(false);
+        setJoinError(message);
       },
       onData: (peerId, data) => onDataRef.current?.(peerId, data),
     });
@@ -51,5 +62,26 @@ export function useAris(onData?: (peerId: string, data: unknown) => void) {
     networkRef.current?.sendTo(peerId, data);
   }, []);
 
-  return { myId, peers, status, joinError, join, sendTo };
+  const acceptRequest = useCallback((peerId: string) => {
+    networkRef.current?.acceptIncoming(peerId);
+  }, []);
+
+  const declineRequest = useCallback((peerId: string) => {
+    networkRef.current?.declineIncoming(peerId);
+    setIncomingRequests((prev) => prev.filter((p) => p !== peerId));
+  }, []);
+
+  return {
+    myId,
+    peers,
+    status,
+    joinError,
+    joinSuccess,
+    waitingApproval,
+    incomingRequests,
+    join,
+    sendTo,
+    acceptRequest,
+    declineRequest,
+  };
 }
