@@ -19,7 +19,19 @@ export default function Home() {
     setIncoming({ peerId, data });
   }, []);
 
-  const { myId, peers, status, joinError, join, sendTo } = useAris(handleData);
+  const {
+    myId,
+    peers,
+    status,
+    joinError,
+    joinSuccess,
+    waitingApproval,
+    incomingRequests,
+    join,
+    sendTo,
+    acceptRequest,
+    declineRequest,
+  } = useAris(handleData);
 
   return (
     <>
@@ -54,7 +66,12 @@ export default function Home() {
               peers={peers}
               status={status}
               joinError={joinError}
+              joinSuccess={joinSuccess}
+              waitingApproval={waitingApproval}
+              incomingRequests={incomingRequests}
               onJoin={join}
+              onAccept={acceptRequest}
+              onDecline={declineRequest}
             />
           </div>
         </motion.section>
