@@ -1,57 +1,50 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
-import { ArisNetwork } from "@/lib/peer";
+import { useState } from "react";
 
 export default function PeerConnect({
-  onPeerCountChange,
+  myId,
+  peers,
+  status,
+  joinError,
+  onJoin,
 }: {
-  onPeerCountChange?: (count: number) => void;
+  myId: string;
+  peers: string[];
+  status: "connecting" | "ready" | "error";
+  joinError: string;
+  onJoin: (code: string) => void;
 }) {
-  const networkRef = useRef<ArisNetwork | null>(null);
-  const [myId, setMyId] = useState("");
   const [joinCode, setJoinCode] = useState("");
-  const [peers, setPeers] = useState<string[]>([]);
-  const [status, setStatus] = useState<"connecting" | "ready" | "error">(
-    "connecting"
-  );
-
-  useEffect(() => {
-    const network = new ArisNetwork({
-      onOpen: (id) => {
-        setMyId(id);
-        setStatus("ready");
-      },
-      onPeerConnect: (peerId) => {
-        setPeers((prev) => (prev.includes(peerId) ? prev : [...prev, peerId]));
-      },
-      onPeerDisconnect: (peerId) => {
-        setPeers((prev) => prev.filter((p) => p !== peerId));
-      },
-      onError: () => setStatus("error"),
-    });
-
-    networkRef.current = network;
-    return () => network.destroy();
-  }, []);
-
-  useEffect(() => {
-    onPeerCountChange?.(peers.length);
-  }, [peers, onPeerCountChange]);
+  const [copied, setCopied] = useState(false);
 
   function handleJoin() {
-    if (!joinCode.trim() || !networkRef.current) return;
-    networkRef.current.join(joinCode.trim());
+    if (!joinCode.trim()) return;
+    onJoin(joinCode.trim());
     setJoinCode("");
+  }
+
+  function handleCopy() {
+    if (!myId) return;
+    navigator.clipboard.writeText(myId);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 1500);
   }
 
   return (
     <div className="peer-panel">
       <div className="peer-row">
         <span className="peer-label">Your room code</span>
-        <code className="peer-code">
-          {status === "ready" ? myId : status === "error" ? "connection failed" : "connecting…"}
-        </code>
+        <div className="peer-code-row">
+          <code className="peer-code">
+            {status === "ready" ? myId : status === "error" ? "connection failed" : "connecting…"}
+          </code>
+          {status === "ready" && (
+            <button className="peer-copy" onClick={handleCopy}>
+              {copied ? "copied" : "copy"}
+            </button>
+          )}
+        </div>
       </div>
 
       <div className="peer-row">
@@ -65,6 +58,7 @@ export default function PeerConnect({
           />
           <button onClick={handleJoin}>Connect</button>
         </div>
+        {joinError && <p className="peer-error">{joinError}</p>}
       </div>
 
       <p className="peer-count">
