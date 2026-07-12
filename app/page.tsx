@@ -9,6 +9,8 @@ import ProblemSection from "@/components/ProblemSection";
 import RevealSection from "@/components/RevealSection";
 import HowItWorksScroll from "@/components/HowItWorksScroll";
 import { useAris } from "@/lib/useAris";
+import ScrollHint from "@/components/ScrollHint";
+import FaqSection from "@/components/FaqSection";
 
 const fadeUp = {
   hidden: { opacity: 0, y: 28 },
@@ -71,6 +73,7 @@ export default function Home() {
                 where you are.
               </p>
             </div>
+            <ScrollHint />
           </motion.section>
         </div>
 
@@ -132,6 +135,7 @@ export default function Home() {
         <HowItWorksScroll />
 
         <div className="grid-shell">
+          <FaqSection />
           <footer className="footer-section">
             <span className="nav-mark">Aris</span>
             <p className="body-copy">

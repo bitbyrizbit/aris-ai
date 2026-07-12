@@ -104,6 +104,7 @@ html, body {
 }
 
 .hero {
+  position: relative;
   display: grid;
   grid-template-columns: 1.3fr 1fr;
   gap: 3rem;
@@ -684,3 +685,59 @@ html, body {
 }
 
 .footer-link:hover { text-decoration: underline; }
+
+.scroll-hint {
+  position: absolute;
+  bottom: -2.5rem;
+  left: 0;
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.05em;
+  color: var(--muted);
+}
+
+.scroll-hint-line {
+  width: 1px;
+  height: 24px;
+  background: var(--signal);
+  transform-origin: top;
+}
+
+.faq-section { padding: 4rem 0; border-top: 1px solid var(--line); }
+
+.faq-list { margin-top: 2rem; max-width: 640px; }
+
+.faq-item { border-bottom: 1px solid var(--line); }
+
+.faq-question {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1.2rem 0;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-size: 1.15rem;
+  color: var(--ink);
+  text-align: left;
+}
+
+.faq-chevron {
+  font-family: var(--font-mono);
+  color: var(--signal);
+  transition: transform 0.3s ease;
+}
+
+.faq-chevron-open { transform: rotate(180deg); }
+
+.faq-answer {
+  overflow: hidden;
+  padding-bottom: 1.2rem;
+  max-width: 55ch;
+}
