@@ -57,6 +57,10 @@ export class ArisNetwork {
   broadcast(data: unknown) {
     this.connections.forEach((conn) => conn.send(data));
   }
+  sendTo(peerId: string, data: unknown) {
+    const conn = this.connections.get(peerId);
+    conn?.send(data);
+  }
 
   get id() {
     return this.peer.id;
