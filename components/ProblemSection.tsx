@@ -3,9 +3,9 @@
 import { motion } from "framer-motion";
 
 const lines = [
-  "Every prompt you send goes somewhere else first.",
-  "Someone else's server. Someone else's rules.",
-  "What if your own devices were enough?",
+  "Every prompt leaves home before it's answered.",
+  "Filtered, logged, priced — by infrastructure you've never seen.",
+  "What if the room itself was enough?",
 ];
 
 export default function ProblemSection() {

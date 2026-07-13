@@ -17,7 +17,7 @@ export default function ClosingCta() {
       >
         Bring a second device.
         <br />
-        See it converge.
+        Watch it think as one.
       </motion.h2>
       <motion.button
         className="cta-button"
@@ -27,7 +27,7 @@ export default function ClosingCta() {
         viewport={{ once: true }}
         transition={{ duration: 0.6, delay: 0.2 }}
       >
-        Start a session
+        Begin
       </motion.button>
     </section>
   );

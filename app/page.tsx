@@ -69,11 +69,10 @@ export default function Home() {
           >
             <h1>Aris</h1>
             <div className="hero-meta">
-              <p className="hero-tag">On-device AI network</p>
+              <p className="hero-tag">Intelligence, distributed</p>
               <p className="body-copy">
-                Devices converge and run the model together. No cloud
-                inference, no central server — the computation happens
-                where you are.
+                No servers. No middlemen. Just the devices already in
+                your hands, thinking as one.
               </p>
             </div>
             <ScrollHint />
@@ -97,8 +96,8 @@ export default function Home() {
               <span className="num">01</span>
               <span className="map-label">Connect</span>
               <p className="body-copy">
-                Share your room code or a QR scan. Nothing shown here
-                passes through a server.
+                Show a code, scan a screen. The room forms itself —
+                no server ever sees who's in it.
               </p>
               <PeerConnect
                 myId={myId}
@@ -129,13 +128,14 @@ export default function Home() {
               <span className="num">02</span>
               <span className="map-label">Run a task</span>
               <p className="body-copy">
-                Paste a long document. It gets split across every
-                connected device and summarized locally, in parallel.
+                Feed it something long. Watch it fracture across the
+                room and return whole.
               </p>
             </div>
             <UploadPanel myId={myId} peers={peers} sendTo={sendTo} incoming={incoming} />
           </motion.section>
         </div>
+
         <StatementBreak />
         <HowItWorksScroll />
         <ClosingCta />
@@ -145,8 +145,8 @@ export default function Home() {
           <footer className="footer-section">
             <span className="nav-mark">Aris</span>
             <p className="body-copy">
-              Built for OSDHack 2026. No cloud inference, no central
-              server — just devices, converging.
+              No cloud inference. No central server. Just devices,
+              converging.
             </p>
             <a
               href="https://github.com/bitbyrizbit/aris-ai"

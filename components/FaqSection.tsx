@@ -5,20 +5,20 @@ import { motion, AnimatePresence } from "framer-motion";
 
 const faqs = [
   {
-    q: "Does any of this touch a server?",
-    a: "Only the handshake. A small relay helps two devices find each other, the same way a phone book helps two people find each other's number. Every summary, every model, every byte of your actual document stays on the devices in the room.",
+    q: "Where does the data actually go?",
+    a: "Nowhere but the devices in the room. A small relay helps two machines find each other, the way a switchboard connects a call without listening in. Everything else — every summary, every fragment of your document — stays local.",
   },
   {
-    q: "Can a stranger join my session?",
-    a: "No. Every join request needs to be accepted by the host device first. Sharing your room code or QR isn't enough on its own — you approve every device that connects.",
+    q: "Who can get in?",
+    a: "No one, unless you let them. Every device that requests to join waits for the host to approve it by hand. A code alone opens nothing.",
   },
   {
-    q: "What happens if a device drops mid-task?",
-    a: "Its chunk stays unfinished and is flagged, rather than silently vanishing. The rest of the network keeps working on their own portions.",
+    q: "What if a device disappears mid-task?",
+    a: "Its fragment is marked incomplete, not lost silently. The rest of the network finishes without it.",
   },
   {
-    q: "Why not just use one strong device?",
-    a: "For a short document, you're right, it barely matters. The architecture is built for the case that actually needs it: long documents, heavy transcription, batches of files — where pooling a few idle devices beats waiting on one.",
+    q: "Why not just run this on one good laptop?",
+    a: "You can — for something short it barely matters. This exists for when it does: long documents, heavy transcription, batches of files, where a room of ordinary devices outruns one powerful one.",
   },
 ];
 

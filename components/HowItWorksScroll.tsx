@@ -7,17 +7,17 @@ const steps = [
   {
     num: "01",
     title: "Join",
-    body: "Open Aris on any device. It finds the others directly — no account, no server relay for the actual work.",
+    body: "Open Aris anywhere. It finds its own kind — no accounts, no relay standing between you and the room.",
   },
   {
     num: "02",
     title: "Split",
-    body: "A task gets divided across every connected device, sized to how many are in the room.",
+    body: "The work divides itself the instant a second device arrives. Every machine carries exactly its share.",
   },
   {
     num: "03",
     title: "Converge",
-    body: "Each device runs inference locally, in parallel, and the results merge back into one answer.",
+    body: "Each fragment resolves where it stands. What comes back is whole assembled, not stitched.",
   },
 ];
 
