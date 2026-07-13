@@ -5,6 +5,8 @@
   --warm: #FF6B45;
   --line: #2A2C30;
   --muted: #9A9C97;
+  --route: #FF2E2E;
+  --pin: #5B8CFF;
 }
 body::before {
   content: "";
@@ -557,7 +559,7 @@ html, body {
 }
 
 .reveal-container {
-  height: 600vh;
+  height: 650vh;
   position: relative;
 }
 
@@ -569,7 +571,6 @@ html, body {
   display: flex;
   align-items: center;
   justify-content: center;
-  will-change: transform;
 }
 
 .reveal-floor {
@@ -579,14 +580,13 @@ html, body {
     linear-gradient(var(--line) 1px, transparent 1px),
     linear-gradient(90deg, var(--line) 1px, transparent 1px);
   background-size: 48px 48px;
-  opacity: 0.18;
+  opacity: 0.12;
 }
 
 .reveal-scene {
   position: relative;
   width: 100%;
   height: 100%;
-  will-change: transform;
 }
 
 .reveal-svg {
@@ -596,45 +596,55 @@ html, body {
   height: 100%;
 }
 
-.reveal-line {
-  stroke: var(--warm);
-  stroke-width: 0.35;
+.reveal-route {
+  stroke: var(--route);
+  stroke-width: 0.5;
   fill: none;
-  filter: drop-shadow(0 0 3px rgba(255, 107, 69, 0.6));
+  filter: drop-shadow(0 0 4px rgba(255, 46, 46, 0.85));
 }
 
-.reveal-block {
+.reveal-host {
   position: absolute;
   width: 26px;
-  height: 54px;
-  border-radius: 3px;
-  transform: translate(-50%, -100%);
-  background:
-    linear-gradient(160deg, rgba(255,255,255,0.14), transparent 40%),
-    var(--signal);
+  height: 26px;
+  border-radius: 50%;
+  background: var(--ink);
   box-shadow:
-    inset 0 0 0 1px rgba(255,255,255,0.1),
-    0 18px 30px -10px rgba(0,0,0,0.6);
-  will-change: transform, opacity;
+    0 0 0 1px rgba(255,255,255,0.15),
+    0 10px 20px -4px rgba(0,0,0,0.7);
+  transform: translate(-50%, -50%);
 }
 
-.reveal-block-self {
-  background:
-    linear-gradient(160deg, rgba(255,255,255,0.14), transparent 40%),
-    var(--ink);
-  height: 42px;
-}
-
-.reveal-block-shadow {
+.reveal-host::after {
+  content: "";
   position: absolute;
   left: 50%;
-  bottom: -6px;
-  width: 30px;
-  height: 9px;
-  background: rgba(0,0,0,0.4);
+  top: 135%;
+  width: 24px;
+  height: 8px;
+  background: rgba(0,0,0,0.5);
   border-radius: 50%;
   filter: blur(4px);
   transform: translateX(-50%);
+}
+
+.reveal-pin {
+  position: absolute;
+  width: 22px;
+  height: 28px;
+  transform: translate(-50%, -100%);
+  filter: drop-shadow(0 6px 6px rgba(0,0,0,0.55));
+  color: var(--pin);
+}
+
+.reveal-code {
+  position: absolute;
+  font-family: var(--font-mono);
+  font-size: 0.6rem;
+  color: var(--muted);
+  white-space: nowrap;
+  transform: translate(-50%, 0);
+  letter-spacing: 0.02em;
 }
 
 .reveal-caption {
@@ -645,7 +655,7 @@ html, body {
   font-size: 1.4rem;
   color: var(--muted);
   text-align: center;
-  max-width: 26ch;
+  max-width: 28ch;
 }
 
 .how-scroll-container {
