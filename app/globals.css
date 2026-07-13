@@ -741,3 +741,84 @@ html, body {
   padding-bottom: 1.2rem;
   max-width: 55ch;
 }
+
+.feature-section { padding: 5rem 0; border-top: 1px solid var(--line); }
+
+.feature-grid {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 2rem;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 2rem;
+}
+
+.feature-card { display: flex; flex-direction: column; gap: 0.9rem; }
+
+.feature-icon { width: 40px; height: 40px; color: var(--signal); }
+
+.feature-card h4 {
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-weight: 400;
+  font-size: 1.2rem;
+}
+
+.feature-card .body-copy { font-size: 0.92rem; }
+
+.statement-section {
+  background: var(--ink);
+  color: var(--bg);
+  min-height: 50vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4rem 2rem;
+}
+
+.statement-section p {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: clamp(2rem, 5.5vw, 4rem);
+  line-height: 1.05;
+  letter-spacing: -0.02em;
+  max-width: 18ch;
+  text-align: center;
+}
+
+.cta-section {
+  padding: 6rem 2rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2rem;
+  text-align: center;
+  border-top: 1px solid var(--line);
+}
+
+.cta-section h2 {
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-weight: 400;
+  font-size: clamp(2rem, 5vw, 3.2rem);
+  line-height: 1.15;
+}
+
+.cta-button {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 0.95rem;
+  padding: 1rem 2rem;
+  border: none;
+  border-radius: 4px;
+  background: var(--signal);
+  color: var(--bg);
+  cursor: pointer;
+  transition: background 0.2s ease, transform 0.2s ease;
+}
+
+.cta-button:hover { background: var(--ink); transform: translateY(-2px); }
+
+@media (max-width: 900px) {
+  .feature-grid { grid-template-columns: repeat(2, 1fr); }
+}

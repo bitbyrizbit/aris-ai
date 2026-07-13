@@ -11,6 +11,9 @@ import HowItWorksScroll from "@/components/HowItWorksScroll";
 import { useAris } from "@/lib/useAris";
 import ScrollHint from "@/components/ScrollHint";
 import FaqSection from "@/components/FaqSection";
+import FeatureGrid from "@/components/FeatureGrid";
+import StatementBreak from "@/components/StatementBreak";
+import ClosingCta from "@/components/ClosingCta";
 
 const fadeUp = {
   hidden: { opacity: 0, y: 28 },
@@ -79,9 +82,11 @@ export default function Home() {
 
         <ProblemSection />
         <RevealSection />
+        <FeatureGrid />
 
         <div className="grid-shell">
           <motion.section
+            id="connect"
             className="map-module section-fade"
             initial="hidden"
             whileInView="show"
@@ -131,8 +136,9 @@ export default function Home() {
             <UploadPanel myId={myId} peers={peers} sendTo={sendTo} incoming={incoming} />
           </motion.section>
         </div>
-
+        <StatementBreak />
         <HowItWorksScroll />
+        <ClosingCta />
 
         <div className="grid-shell">
           <FaqSection />
