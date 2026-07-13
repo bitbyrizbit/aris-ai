@@ -74,13 +74,13 @@ export default function PeerConnect({
         <div className="peer-row">
           <span className="peer-label">Join requests</span>
           {incomingRequests.map((peerId) => (
-            <div key={peerId} className="peer-request">
-              <code>{peerId}</code>
-              <div className="peer-request-actions">
-                <button className="peer-accept" onClick={() => onAccept(peerId)}>
+            <div key={peerId} className="peer-request" style={{ background: 'rgba(255, 255, 255, 0.08)', border: '1px solid rgba(255, 255, 255, 0.2)', padding: '1rem', borderRadius: '6px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '0.75rem' }}>
+              <code style={{ color: '#fff', fontWeight: 'bold', letterSpacing: '0.05em' }}>{peerId}</code>
+              <div className="peer-request-actions" style={{ display: 'flex', gap: '0.75rem' }}>
+                <button className="peer-accept" style={{ background: '#1f9c58', color: '#fff', border: 'none', padding: '0.5rem 1rem', borderRadius: '4px', cursor: 'pointer', fontWeight: 500 }} onClick={() => onAccept(peerId)}>
                   Accept
                 </button>
-                <button className="peer-decline" onClick={() => onDecline(peerId)}>
+                <button className="peer-decline" style={{ background: 'rgba(255, 255, 255, 0.1)', color: '#fff', border: '1px solid rgba(255,255,255,0.2)', padding: '0.5rem 1rem', borderRadius: '4px', cursor: 'pointer', fontWeight: 500 }} onClick={() => onDecline(peerId)}>
                   Decline
                 </button>
               </div>

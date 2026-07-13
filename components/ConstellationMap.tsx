@@ -3,7 +3,7 @@
 import { Canvas, useFrame } from "@react-three/fiber";
 import { Line, Sparkles, OrbitControls } from "@react-three/drei";
 import { EffectComposer, Bloom } from "@react-three/postprocessing";
-import { useEffect, useMemo, useRef } from "react";
+import { useMemo, useRef } from "react";
 import * as THREE from "three";
 
 type Vec3 = [number, number, number];
@@ -27,8 +27,8 @@ function generatePeers(count: number): { id: string; pos: Vec3 }[] {
 function Ground() {
   return (
     <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, -0.4, 0]}>
-      <planeGeometry args={[30, 30, 30, 30]} />
-      <meshStandardMaterial color="#0B0C0E" wireframe opacity={0.25} transparent />
+      <planeGeometry args={[40, 40, 40, 40]} />
+      <meshBasicMaterial color="#4C6FFF" wireframe transparent opacity={0.05} />
     </mesh>
   );
 }
@@ -36,10 +36,10 @@ function Ground() {
 function Buildings() {
   const buildings = useMemo(() => {
     const seeded: { pos: Vec3; h: number }[] = [];
-    for (let i = 0; i < 22; i++) {
-      const angle = (i / 22) * Math.PI * 2 + (i % 3);
-      const radius = 4 + (i % 5) * 1.1;
-      const h = 0.3 + ((i * 37) % 10) / 10;
+    for (let i = 0; i < 18; i++) {
+      const angle = (i / 18) * Math.PI * 2;
+      const radius = 5 + (i % 3) * 1.5;
+      const h = 0.5 + ((i * 37) % 10) / 5;
       seeded.push({
         pos: [Math.cos(angle) * radius, -0.4 + h / 2, Math.sin(angle) * radius],
         h,
@@ -52,8 +52,12 @@ function Buildings() {
     <>
       {buildings.map((b, i) => (
         <mesh key={i} position={b.pos}>
-          <boxGeometry args={[0.25, b.h, 0.25]} />
-          <meshStandardMaterial color="#ff0084" emissive="#ff0099" emissiveIntensity={0.5} />
+          <boxGeometry args={[0.3, b.h, 0.3]} />
+          <meshStandardMaterial color="#0B0C0E" metalness={0.9} roughness={0.1} transparent opacity={0.8} />
+          <lineSegments>
+            <edgesGeometry args={[new THREE.BoxGeometry(0.3, b.h, 0.3)]} />
+            <lineBasicMaterial color="#4C6FFF" transparent opacity={0.15} />
+          </lineSegments>
         </mesh>
       ))}
     </>
@@ -61,23 +65,35 @@ function Buildings() {
 }
 
 function Node({ position, self = false }: { position: Vec3; self?: boolean }) {
-  const ref = useRef<THREE.Mesh>(null);
+  const ref = useRef<THREE.Group>(null);
 
   useFrame(({ clock }) => {
-    if (!ref.current || self) return;
+    if (!ref.current) return;
     const t = clock.getElapsedTime();
-    ref.current.scale.setScalar(1 + Math.sin(t * 2 + position[0]) * 0.14);
+    ref.current.position.y = position[1] + Math.sin(t * 2 + position[0]) * 0.1;
+    ref.current.rotation.y = t * 0.5;
+    ref.current.rotation.z = Math.sin(t) * 0.1;
   });
 
   return (
-    <mesh ref={ref} position={position}>
-      <sphereGeometry args={[self ? 0.16 : 0.11, 32, 32]} />
-      <meshStandardMaterial
-        color={self ? "#F2F1EC" : "#0434f2"}
-        emissive={self ? "#F2F1EC" : "#324eba"}
-        emissiveIntensity={self ? 0.6 : 1.8}
-      />
-    </mesh>
+    <group ref={ref} position={position}>
+      <mesh>
+        <boxGeometry args={self ? [0.35, 0.35, 0.35] : [0.25, 0.25, 0.25]} />
+        <meshPhysicalMaterial 
+          color={self ? "#4C6FFF" : "#FF6B45"} 
+          emissive={self ? "#4C6FFF" : "#FF6B45"} 
+          emissiveIntensity={1.5}
+          transparent
+          opacity={0.8}
+          roughness={0.1}
+          metalness={0.8}
+        />
+      </mesh>
+      <mesh>
+        <boxGeometry args={self ? [0.5, 0.5, 0.5] : [0.35, 0.35, 0.35]} />
+        <meshBasicMaterial color={self ? "#ffffff" : "#FF6B45"} wireframe transparent opacity={0.4} />
+      </mesh>
+    </group>
   );
 }
 
@@ -87,10 +103,10 @@ function Signal({ from, to }: { from: Vec3; to: Vec3 }) {
 
   useFrame(({ clock }) => {
     if (lineRef.current?.material) {
-      lineRef.current.material.dashOffset = -clock.getElapsedTime() * 0.6;
+      lineRef.current.material.dashOffset = -clock.getElapsedTime() * 1.5;
     }
     if (pulseRef.current) {
-      const t = (clock.getElapsedTime() * 0.4 + from[0]) % 1;
+      const t = (clock.getElapsedTime() * 0.6 + from[0] * 10) % 1;
       pulseRef.current.position.set(
         THREE.MathUtils.lerp(from[0], to[0], t),
         THREE.MathUtils.lerp(from[1], to[1], t),
@@ -104,18 +120,18 @@ function Signal({ from, to }: { from: Vec3; to: Vec3 }) {
       <Line
         ref={lineRef}
         points={[from, to]}
-        color="#FF6B45"
-        lineWidth={1}
+        color="#4C6FFF"
+        lineWidth={2}
         dashed
-        dashScale={6}
-        dashSize={0.4}
-        gapSize={0.3}
+        dashScale={4}
+        dashSize={0.5}
+        gapSize={0.2}
         transparent
         opacity={0.6}
       />
       <mesh ref={pulseRef}>
-        <sphereGeometry args={[0.04, 12, 12]} />
-        <meshStandardMaterial color="#FF6B45" emissive="#FF6B45" emissiveIntensity={2} />
+        <boxGeometry args={[0.08, 0.08, 0.08]} />
+        <meshBasicMaterial color="#ffffff" />
       </mesh>
     </>
   );
@@ -135,30 +151,32 @@ function Scene({ peerCount }: { peerCount: number }) {
       {peers.map((p) => (
         <Node key={p.id} position={p.pos} />
       ))}
-      <Sparkles count={60} scale={8} size={1.4} speed={0.15} color="#4C6FFF" opacity={0.3} />
+      <Sparkles count={80} scale={10} size={2} speed={0.2} color="#4C6FFF" opacity={0.4} />
     </>
   );
 }
 
 export default function ConstellationMap({ peerCount }: { peerCount: number }) {
   return (
-    <Canvas camera={{ position: [4, 3.5, 6], fov: 42 }}>
-      <color attach="background" args={["#141926"]} />
-      <ambientLight intensity={0.65} />
-      <pointLight position={[4, 5, 4]} intensity={1.6} color="#0032f9" />
-      <pointLight position={[-4, 2, -2]} intensity={0.7} color="#FF6B45" />
+    <Canvas camera={{ position: [5, 4, 7], fov: 42 }}>
+      <color attach="background" args={["#0B0C0E"]} />
+      <ambientLight intensity={0.4} />
+      <pointLight position={[2, 5, 2]} intensity={2} color="#4C6FFF" />
+      <pointLight position={[-4, 2, -2]} intensity={1} color="#FF6B45" />
       <Scene peerCount={peerCount} />
       <OrbitControls
-        enablePan
-        enableZoom
+        enablePan={false}
+        enableZoom={false}
         enableRotate
-        minDistance={2.5}
-        maxDistance={14}
-        dampingFactor={0.08}
+        autoRotate
+        autoRotateSpeed={0.5}
+        minDistance={5}
+        maxDistance={12}
+        dampingFactor={0.05}
         enableDamping
       />
       <EffectComposer>
-        <Bloom intensity={1.1} luminanceThreshold={0.12} luminanceSmoothing={0.4} mipmapBlur />
+        <Bloom intensity={2} luminanceThreshold={0.1} luminanceSmoothing={0.9} mipmapBlur />
       </EffectComposer>
     </Canvas>
   );
