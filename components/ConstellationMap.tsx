@@ -1,9 +1,9 @@
 "use client";
 
 import { Canvas, useFrame } from "@react-three/fiber";
-import { Line, Sparkles } from "@react-three/drei";
+import { Line, Sparkles, OrbitControls } from "@react-three/drei";
 import { EffectComposer, Bloom } from "@react-three/postprocessing";
-import { useEffect, useRef } from "react";
+import { useEffect, useMemo, useRef } from "react";
 import * as THREE from "three";
 
 type Vec3 = [number, number, number];
@@ -12,16 +12,52 @@ function generatePeers(count: number): { id: string; pos: Vec3 }[] {
   const golden = Math.PI * (3 - Math.sqrt(5));
   return Array.from({ length: count }).map((_, i) => {
     const angle = i * golden;
-    const radius = 1.8 + (i % 3) * 0.4;
+    const radius = 1.6 + (i % 4) * 0.5;
     return {
       id: `peer-${i}`,
       pos: [
         Math.cos(angle) * radius,
-        Math.sin(angle) * radius * 0.6,
-        -0.4 - (i % 3) * 0.6,
+        0.1,
+        Math.sin(angle) * radius,
       ] as Vec3,
     };
   });
+}
+
+function Ground() {
+  return (
+    <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, -0.4, 0]}>
+      <planeGeometry args={[30, 30, 30, 30]} />
+      <meshStandardMaterial color="#0B0C0E" wireframe opacity={0.25} transparent />
+    </mesh>
+  );
+}
+
+function Buildings() {
+  const buildings = useMemo(() => {
+    const seeded: { pos: Vec3; h: number }[] = [];
+    for (let i = 0; i < 22; i++) {
+      const angle = (i / 22) * Math.PI * 2 + (i % 3);
+      const radius = 4 + (i % 5) * 1.1;
+      const h = 0.3 + ((i * 37) % 10) / 10;
+      seeded.push({
+        pos: [Math.cos(angle) * radius, -0.4 + h / 2, Math.sin(angle) * radius],
+        h,
+      });
+    }
+    return seeded;
+  }, []);
+
+  return (
+    <>
+      {buildings.map((b, i) => (
+        <mesh key={i} position={b.pos}>
+          <boxGeometry args={[0.25, b.h, 0.25]} />
+          <meshStandardMaterial color="#1A1C20" emissive="#14161A" emissiveIntensity={0.3} />
+        </mesh>
+      ))}
+    </>
+  );
 }
 
 function Node({ position, self = false }: { position: Vec3; self?: boolean }) {
@@ -35,11 +71,11 @@ function Node({ position, self = false }: { position: Vec3; self?: boolean }) {
 
   return (
     <mesh ref={ref} position={position}>
-      <sphereGeometry args={[self ? 0.22 : 0.13, 32, 32]} />
+      <sphereGeometry args={[self ? 0.16 : 0.11, 32, 32]} />
       <meshStandardMaterial
-        color={self ? "#0E0E0E" : "#1E3FFF"}
-        emissive={self ? "#0E0E0E" : "#1E3FFF"}
-        emissiveIntensity={self ? 0.15 : 1.6}
+        color={self ? "#F2F1EC" : "#4C6FFF"}
+        emissive={self ? "#F2F1EC" : "#4C6FFF"}
+        emissiveIntensity={self ? 0.6 : 1.8}
       />
     </mesh>
   );
@@ -68,67 +104,58 @@ function Signal({ from, to }: { from: Vec3; to: Vec3 }) {
       <Line
         ref={lineRef}
         points={[from, to]}
-        color="#B9B6A8"
+        color="#FF6B45"
         lineWidth={1}
         dashed
         dashScale={6}
         dashSize={0.4}
         gapSize={0.3}
         transparent
-        opacity={0.5}
+        opacity={0.6}
       />
       <mesh ref={pulseRef}>
-        <sphereGeometry args={[0.045, 12, 12]} />
-        <meshStandardMaterial color="#FF5A36" emissive="#FF5A36" emissiveIntensity={2} />
+        <sphereGeometry args={[0.04, 12, 12]} />
+        <meshStandardMaterial color="#FF6B45" emissive="#FF6B45" emissiveIntensity={2} />
       </mesh>
     </>
   );
 }
 
 function Scene({ peerCount }: { peerCount: number }) {
-  const group = useRef<THREE.Group>(null);
-  const target = useRef({ x: 0, y: 0 });
   const peers = generatePeers(peerCount);
 
-  useEffect(() => {
-    function handlePointer(e: PointerEvent) {
-      target.current.x = (e.clientX / window.innerWidth - 0.5) * 0.8;
-      target.current.y = (e.clientY / window.innerHeight - 0.5) * -0.4;
-    }
-    window.addEventListener("pointermove", handlePointer);
-    return () => window.removeEventListener("pointermove", handlePointer);
-  }, []);
-
-  useFrame(({ clock }) => {
-    if (!group.current) return;
-    const drift = Math.sin(clock.getElapsedTime() * 0.15) * 0.15;
-    group.current.rotation.y +=
-      (target.current.x + drift - group.current.rotation.y) * 0.03;
-    group.current.rotation.x +=
-      (target.current.y - group.current.rotation.x) * 0.03;
-  });
-
   return (
-    <group ref={group}>
-      <Node position={[0, 0, 0]} self />
+    <>
+      <Ground />
+      <Buildings />
+      <Node position={[0, 0.1, 0]} self />
       {peers.map((p) => (
-        <Signal key={`s-${p.id}`} from={[0, 0, 0]} to={p.pos} />
+        <Signal key={`s-${p.id}`} from={[0, 0.1, 0]} to={p.pos} />
       ))}
       {peers.map((p) => (
         <Node key={p.id} position={p.pos} />
       ))}
-      <Sparkles count={70} scale={6} size={1.6} speed={0.2} color="#1E3FFF" opacity={0.35} />
-    </group>
+      <Sparkles count={60} scale={8} size={1.4} speed={0.15} color="#4C6FFF" opacity={0.3} />
+    </>
   );
 }
 
 export default function ConstellationMap({ peerCount }: { peerCount: number }) {
   return (
-    <Canvas camera={{ position: [0, 0, 6], fov: 42 }}>
-      <ambientLight intensity={0.55} />
-      <pointLight position={[3, 3, 4]} intensity={1.4} color="#1E3FFF" />
-      <pointLight position={[-3, -2, 2]} intensity={0.6} color="#FF5A36" />
+    <Canvas camera={{ position: [4, 3.5, 6], fov: 42 }}>
+      <ambientLight intensity={0.4} />
+      <pointLight position={[4, 5, 4]} intensity={1.2} color="#4C6FFF" />
+      <pointLight position={[-4, 2, -2]} intensity={0.5} color="#FF6B45" />
       <Scene peerCount={peerCount} />
+      <OrbitControls
+        enablePan
+        enableZoom
+        enableRotate
+        minDistance={2.5}
+        maxDistance={14}
+        dampingFactor={0.08}
+        enableDamping
+      />
       <EffectComposer>
         <Bloom intensity={1.1} luminanceThreshold={0.12} luminanceSmoothing={0.4} mipmapBlur />
       </EffectComposer>
