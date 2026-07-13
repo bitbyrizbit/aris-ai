@@ -99,7 +99,7 @@ export default function PeerConnect({
             placeholder="ARIS-1234"
             suppressHydrationWarning
           />
-          <button onClick={handleJoin} disabled={waitingApproval}>
+          <button onClick={handleJoin} disabled={waitingApproval} suppressHydrationWarning>
             {waitingApproval ? "Waiting…" : "Connect"}
           </button>
           <button className="peer-scan-btn" onClick={() => setScanning(true)} disabled={waitingApproval}>
