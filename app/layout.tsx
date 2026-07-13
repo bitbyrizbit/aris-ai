@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Bricolage_Grotesque, Inter, Instrument_Serif, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
+import LoaderScreen from "@/components/LoaderScreen";
 
 const display = Bricolage_Grotesque({
   subsets: ["latin"],
@@ -40,6 +41,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${display.variable} ${body.variable} ${serif.variable} ${mono.variable}`}>
+        <LoaderScreen />
         {children}
       </body>
     </html>
