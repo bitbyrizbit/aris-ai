@@ -7,7 +7,7 @@ const steps = [
   {
     num: "01",
     title: "Join",
-    body: "Open Aris anywhere. It finds its own kind — no accounts, no relay standing between you and the room.",
+    body: "Open Aris anywhere. It finds its own kind. No accounts, no relay standing between you and the room.",
   },
   {
     num: "02",
@@ -17,7 +17,7 @@ const steps = [
   {
     num: "03",
     title: "Converge",
-    body: "Each fragment resolves where it stands. What comes back is whole assembled, not stitched.",
+    body: "Each fragment resolves where it stands. What comes back is whole, assembled rather than stitched.",
   },
 ];
 

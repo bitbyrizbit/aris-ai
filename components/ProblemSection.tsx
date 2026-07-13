@@ -4,7 +4,7 @@ import { motion } from "framer-motion";
 
 const lines = [
   "Every prompt leaves home before it's answered.",
-  "Filtered, logged, priced — by infrastructure you've never seen.",
+  "Logged, filtered, priced by infrastructure you'll never see.",
   "What if the room itself was enough?",
 ];
 

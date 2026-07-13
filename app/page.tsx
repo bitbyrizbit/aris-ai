@@ -96,8 +96,8 @@ export default function Home() {
               <span className="num">01</span>
               <span className="map-label">Connect</span>
               <p className="body-copy">
-                Show a code, scan a screen. The room forms itself —
-                no server ever sees who's in it.
+                Show a code, scan a screen. The room forms itself, 
+                and no server ever sees who's in it.
               </p>
               <PeerConnect
                 myId={myId}

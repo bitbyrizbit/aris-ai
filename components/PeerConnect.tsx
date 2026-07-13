@@ -97,6 +97,7 @@ export default function PeerConnect({
             onChange={(e) => setJoinCode(e.target.value)}
             onKeyDown={(e) => e.key === "Enter" && handleJoin()}
             placeholder="ARIS-1234"
+            suppressHydrationWarning
           />
           <button onClick={handleJoin} disabled={waitingApproval}>
             {waitingApproval ? "Waiting…" : "Connect"}
