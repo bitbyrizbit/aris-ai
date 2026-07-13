@@ -53,7 +53,7 @@ function Buildings() {
       {buildings.map((b, i) => (
         <mesh key={i} position={b.pos}>
           <boxGeometry args={[0.25, b.h, 0.25]} />
-          <meshStandardMaterial color="#1A1C20" emissive="#14161A" emissiveIntensity={0.3} />
+          <meshStandardMaterial color="#ff0084" emissive="#ff0099" emissiveIntensity={0.5} />
         </mesh>
       ))}
     </>
@@ -73,8 +73,8 @@ function Node({ position, self = false }: { position: Vec3; self?: boolean }) {
     <mesh ref={ref} position={position}>
       <sphereGeometry args={[self ? 0.16 : 0.11, 32, 32]} />
       <meshStandardMaterial
-        color={self ? "#F2F1EC" : "#4C6FFF"}
-        emissive={self ? "#F2F1EC" : "#4C6FFF"}
+        color={self ? "#F2F1EC" : "#0434f2"}
+        emissive={self ? "#F2F1EC" : "#324eba"}
         emissiveIntensity={self ? 0.6 : 1.8}
       />
     </mesh>
@@ -143,9 +143,10 @@ function Scene({ peerCount }: { peerCount: number }) {
 export default function ConstellationMap({ peerCount }: { peerCount: number }) {
   return (
     <Canvas camera={{ position: [4, 3.5, 6], fov: 42 }}>
-      <ambientLight intensity={0.4} />
-      <pointLight position={[4, 5, 4]} intensity={1.2} color="#4C6FFF" />
-      <pointLight position={[-4, 2, -2]} intensity={0.5} color="#FF6B45" />
+      <color attach="background" args={["#141926"]} />
+      <ambientLight intensity={0.65} />
+      <pointLight position={[4, 5, 4]} intensity={1.6} color="#0032f9" />
+      <pointLight position={[-4, 2, -2]} intensity={0.7} color="#FF6B45" />
       <Scene peerCount={peerCount} />
       <OrbitControls
         enablePan
