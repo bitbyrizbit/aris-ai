@@ -557,7 +557,7 @@ html, body {
 }
 
 .reveal-container {
-  height: 500vh;
+  height: 600vh;
   position: relative;
 }
 
@@ -569,27 +569,24 @@ html, body {
   display: flex;
   align-items: center;
   justify-content: center;
-  perspective: 1200px;
+  will-change: transform;
 }
 
 .reveal-floor {
   position: absolute;
-  inset: -30% -20%;
+  inset: -10%;
   background-image:
     linear-gradient(var(--line) 1px, transparent 1px),
     linear-gradient(90deg, var(--line) 1px, transparent 1px);
-  background-size: 56px 56px;
-  opacity: 0.35;
-  transform: rotateX(62deg);
-  mask-image: radial-gradient(circle at center, black 25%, transparent 72%);
-  -webkit-mask-image: radial-gradient(circle at center, black 25%, transparent 72%);
+  background-size: 48px 48px;
+  opacity: 0.18;
 }
 
 .reveal-scene {
   position: relative;
   width: 100%;
   height: 100%;
-  transform-style: preserve-3d;
+  will-change: transform;
 }
 
 .reveal-svg {
@@ -600,41 +597,41 @@ html, body {
 }
 
 .reveal-line {
-  stroke: var(--signal);
+  stroke: var(--warm);
   stroke-width: 0.35;
   fill: none;
-  filter: drop-shadow(0 0 3px rgba(76, 111, 255, 0.7));
+  filter: drop-shadow(0 0 3px rgba(255, 107, 69, 0.6));
 }
 
 .reveal-block {
   position: absolute;
-  width: 30px;
-  height: 62px;
+  width: 26px;
+  height: 54px;
   border-radius: 3px;
   transform: translate(-50%, -100%);
-  transform-origin: bottom center;
   background:
-    linear-gradient(160deg, rgba(255,255,255,0.3), transparent 40%),
+    linear-gradient(160deg, rgba(255,255,255,0.14), transparent 40%),
     var(--signal);
   box-shadow:
-    inset 0 0 0 1px rgba(255,255,255,0.12),
-    0 20px 34px -10px rgba(0,0,0,0.5);
+    inset 0 0 0 1px rgba(255,255,255,0.1),
+    0 18px 30px -10px rgba(0,0,0,0.6);
+  will-change: transform, opacity;
 }
 
 .reveal-block-self {
   background:
-    linear-gradient(160deg, rgba(255,255,255,0.18), transparent 40%),
+    linear-gradient(160deg, rgba(255,255,255,0.14), transparent 40%),
     var(--ink);
-  height: 50px;
+  height: 42px;
 }
 
 .reveal-block-shadow {
   position: absolute;
   left: 50%;
   bottom: -6px;
-  width: 34px;
-  height: 10px;
-  background: rgba(0,0,0,0.35);
+  width: 30px;
+  height: 9px;
+  background: rgba(0,0,0,0.4);
   border-radius: 50%;
   filter: blur(4px);
   transform: translateX(-50%);
@@ -642,7 +639,7 @@ html, body {
 
 .reveal-caption {
   position: absolute;
-  bottom: 12%;
+  bottom: 10%;
   font-family: var(--font-serif);
   font-style: italic;
   font-size: 1.4rem;
