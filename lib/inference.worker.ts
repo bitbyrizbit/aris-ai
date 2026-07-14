@@ -32,7 +32,13 @@ self.onmessage = async (event: MessageEvent) => {
   if (type === "summarize") {
     try {
       const model = await getSummarizer();
-      const output = await model(text, { max_new_tokens: 120, min_new_tokens: 30 });
+      const output = await model(text, {
+        max_new_tokens: 80,
+        min_new_tokens: 20,
+        num_beams: 1,
+        do_sample: false,
+        early_stopping: true,
+      });
       const summary = Array.isArray(output) ? output[0].summary_text : output.summary_text;
       self.postMessage({ type: "result", id, summary });
     } catch (err) {
