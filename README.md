@@ -82,7 +82,11 @@ Open two tabs, or two real devices pointed at a deployed instance. Connect them.
 ### See it
 
 Demo video: *[link before submission]*
-Screenshots: *[before submission]*
+
+![Aris hero](./docs/screenshots/01-hero.png)
+![Network topology reveal](./docs/screenshots/03-network-topology.png)
+![Connect and run a task across three devices](./docs/screenshots/04-connect-run.png)
+![Converged result](./docs/screenshots/05-converged-result.png)
 
 ### Where the edges are
 
