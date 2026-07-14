@@ -81,7 +81,7 @@ Open two tabs, or two real devices pointed at a deployed instance. Connect them.
 
 ### See it
 
-Demo video: *[link before submission]*
+Demo video: *[Live Demo Video](https://www.loom.com/share/a09e3d42510f478889943d58b003334b)*
 
 ![Aris hero](./docs/screenshots/01-hero.png)
 ![Aris problem](./docs/screenshots/02-problem.png)
