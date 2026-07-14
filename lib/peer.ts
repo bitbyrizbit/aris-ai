@@ -128,6 +128,14 @@ export class ArisNetwork {
   sendTo(peerId: string, data: unknown) {
     this.connections.get(peerId)?.send(data);
   }
+  
+  disconnect(peerId: string) {
+    const conn = this.connections.get(peerId);
+    if (!conn) return;
+    conn.close();
+    this.connections.delete(peerId);
+    this.handlers.onPeerDisconnect?.(peerId);
+  }
 
   get id() {
     return this.peer.id;

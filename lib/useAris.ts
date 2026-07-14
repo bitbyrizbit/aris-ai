@@ -74,6 +74,10 @@ export function useAris(onData?: (peerId: string, data: unknown) => void) {
     setIncomingRequests((prev) => prev.filter((p) => p !== peerId));
   }, []);
 
+  const disconnectPeer = useCallback((peerId: string) => {
+    networkRef.current?.disconnect(peerId);
+  }, []);
+
   const reconnectToLastRoom = useCallback(() => {
     if (lastRoom) join(lastRoom);
   }, [lastRoom, join]);
@@ -89,6 +93,7 @@ export function useAris(onData?: (peerId: string, data: unknown) => void) {
     lastRoom,
     join,
     sendTo,
+    disconnectPeer,
     acceptRequest,
     declineRequest,
     reconnectToLastRoom,
