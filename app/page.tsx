@@ -14,6 +14,7 @@ import FaqSection from "@/components/FaqSection";
 import FeatureGrid from "@/components/FeatureGrid";
 import StatementBreak from "@/components/StatementBreak";
 import ClosingCta from "@/components/ClosingCta";
+import PeerList from "@/components/PeerList";
 
 const fadeUp = {
   hidden: { opacity: 0, y: 28 },
@@ -37,6 +38,7 @@ export default function Home() {
     incomingRequests,
     join,
     sendTo,
+    disconnectPeer,
     acceptRequest,
     declineRequest,
   } = useAris(handleData);
@@ -46,10 +48,14 @@ export default function Home() {
       <nav className="nav">
         <div className="nav-inner">
           <span className="nav-mark">Aris</span>
-          <span className="nav-status">
-            <span className="status-dot" />
-            {peers.length} device{peers.length === 1 ? "" : "s"} online
-          </span>
+          {peers.length > 0 ? (
+            <PeerList peers={peers} onDisconnect={disconnectPeer} />
+          ) : (
+            <span className="nav-status">
+              <span className="status-dot" />
+              0 devices online
+            </span>
+          )}
           <div className="nav-links">
             <a href="#how">How it works</a>
             <a href="https://github.com/bitbyrizbit/aris-ai" target="_blank" rel="noreferrer">
