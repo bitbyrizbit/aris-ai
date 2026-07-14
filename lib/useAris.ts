@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState, useCallback } from "react";
-import { ArisNetwork } from "@/lib/peer";
+import { ArisNetwork, getLastJoinedRoom } from "@/lib/peer";
 
 export type ArisStatus = "connecting" | "ready" | "error";
 
@@ -14,10 +14,13 @@ export function useAris(onData?: (peerId: string, data: unknown) => void) {
   const [joinSuccess, setJoinSuccess] = useState(false);
   const [waitingApproval, setWaitingApproval] = useState(false);
   const [incomingRequests, setIncomingRequests] = useState<string[]>([]);
+  const [lastRoom, setLastRoom] = useState<string | null>(null);
   const onDataRef = useRef(onData);
   onDataRef.current = onData;
 
   useEffect(() => {
+    setLastRoom(getLastJoinedRoom());
+
     const network = new ArisNetwork({
       onOpen: (id) => {
         setMyId(id);
@@ -71,6 +74,10 @@ export function useAris(onData?: (peerId: string, data: unknown) => void) {
     setIncomingRequests((prev) => prev.filter((p) => p !== peerId));
   }, []);
 
+  const reconnectToLastRoom = useCallback(() => {
+    if (lastRoom) join(lastRoom);
+  }, [lastRoom, join]);
+
   return {
     myId,
     peers,
@@ -79,9 +86,11 @@ export function useAris(onData?: (peerId: string, data: unknown) => void) {
     joinSuccess,
     waitingApproval,
     incomingRequests,
+    lastRoom,
     join,
     sendTo,
     acceptRequest,
     declineRequest,
+    reconnectToLastRoom,
   };
 }

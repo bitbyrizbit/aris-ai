@@ -10,6 +10,8 @@ export type PeerEventHandlers = {
   onData?: (peerId: string, data: unknown) => void;
 };
 
+const STORAGE_KEY = "aris-my-room-code";
+
 function generateRoomCode(): string {
   const num = Math.floor(1000 + Math.random() * 9000);
   return `ARIS-${num}`;
@@ -23,7 +25,8 @@ export class ArisNetwork {
 
   constructor(handlers: PeerEventHandlers = {}) {
     this.handlers = handlers;
-    this.initPeer(generateRoomCode());
+    const remembered = sessionStorage.getItem(STORAGE_KEY);
+    this.initPeer(remembered || generateRoomCode());
   }
 
   private initPeer(id: string) {
@@ -34,7 +37,10 @@ export class ArisNetwork {
       secure: process.env.NEXT_PUBLIC_PEER_SECURE !== "false",
     });
 
-    this.peer.on("open", (openId) => this.handlers.onOpen?.(openId));
+    this.peer.on("open", (openId) => {
+      sessionStorage.setItem(STORAGE_KEY, openId);
+      this.handlers.onOpen?.(openId);
+    });
 
     this.peer.on("connection", (conn) => {
       this.pendingIncoming.set(conn.peer, conn);
@@ -54,6 +60,7 @@ export class ArisNetwork {
 
     this.peer.on("error", (err: any) => {
       if (err.type === "unavailable-id") {
+        sessionStorage.removeItem(STORAGE_KEY);
         this.initPeer(generateRoomCode());
         return;
       }
@@ -80,6 +87,8 @@ export class ArisNetwork {
   join(roomCode: string) {
     const code = roomCode.trim();
     if (!code) return;
+
+    sessionStorage.setItem("aris-last-joined", code);
 
     const conn = this.peer.connect(code, { reliable: true });
     this.handlers.onWaitingApproval?.(conn.peer);
@@ -127,4 +136,8 @@ export class ArisNetwork {
   destroy() {
     this.peer.destroy();
   }
+}
+
+export function getLastJoinedRoom(): string | null {
+  return sessionStorage.getItem("aris-last-joined");
 }

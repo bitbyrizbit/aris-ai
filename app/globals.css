@@ -914,6 +914,37 @@ html, body {
   translate: -50% 0;
 }
 
+.merge-status {
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  color: var(--signal);
+  margin-top: 0.5rem;
+}
+
+.final-summary {
+  margin-top: 1rem;
+  padding: 1rem;
+  border: 1px solid var(--signal);
+  border-radius: 6px;
+  background: rgba(76, 111, 255, 0.08);
+}
+
+.final-summary-label {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--signal);
+  display: block;
+  margin-bottom: 0.5rem;
+}
+
+.final-summary p {
+  font-size: 1rem;
+  line-height: 1.6;
+  color: var(--ink);
+}
+
 @media (max-width: 900px) {
   .feature-grid { grid-template-columns: repeat(2, 1fr); }
 }

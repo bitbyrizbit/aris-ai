@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { chunkText } from "@/lib/chunker";
 import { useInferenceWorker } from "@/lib/useInferenceWorker";
+import { buildMergePrompt, isReadyToMerge } from "@/lib/merge";
 
 type ChunkStatus = "pending" | "processing" | "done" | "error";
 
@@ -27,9 +28,12 @@ export default function UploadPanel({
   const [text, setText] = useState("");
   const [results, setResults] = useState<DeviceResult[]>([]);
   const [running, setRunning] = useState(false);
+  const [finalSummary, setFinalSummary] = useState<string | null>(null);
+  const [mergeStatus, setMergeStatus] = useState<"idle" | "merging" | "done">("idle");
   const [incomingTask, setIncomingTask] = useState<
     { fromPeer: string; status: "processing" | "done" } | null
   >(null);
+  const mergeTriggered = useRef(false);
   const fileRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
@@ -55,6 +59,26 @@ export default function UploadPanel({
     }
   }, [incoming, workerStatus, summarize, sendTo]);
 
+  useEffect(() => {
+    if (mergeTriggered.current) return;
+    if (!running) return;
+    if (!isReadyToMerge(results)) return;
+    if (results.length < 2) return;
+
+    mergeTriggered.current = true;
+    setMergeStatus("merging");
+
+    const prompt = buildMergePrompt(results.map((r) => r.summary || ""));
+    summarize(prompt)
+      .then((merged) => {
+        setFinalSummary(merged);
+        setMergeStatus("done");
+      })
+      .catch(() => {
+        setMergeStatus("idle");
+      });
+  }, [results, running, summarize]);
+
   async function handleFile(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
     if (!file) return;
@@ -65,6 +89,9 @@ export default function UploadPanel({
   async function handleRun() {
     if (!text.trim() || workerStatus !== "ready") return;
     setRunning(true);
+    setFinalSummary(null);
+    setMergeStatus("idle");
+    mergeTriggered.current = false;
 
     const deviceIds = [myId, ...peers];
     const chunks = chunkText(text, deviceIds.length);
@@ -157,6 +184,17 @@ export default function UploadPanel({
               {r.summary && <p className="result-summary">{r.summary}</p>}
             </div>
           ))}
+        </div>
+      )}
+
+      {mergeStatus === "merging" && (
+        <p className="merge-status">Converging results into one answer…</p>
+      )}
+
+      {finalSummary && (
+        <div className="final-summary">
+          <span className="final-summary-label">Converged result</span>
+          <p>{finalSummary}</p>
         </div>
       )}
     </div>
