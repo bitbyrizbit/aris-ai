@@ -948,3 +948,70 @@ html, body {
 @media (max-width: 900px) {
   .feature-grid { grid-template-columns: repeat(2, 1fr); }
 }
+
+.peer-list-wrap {
+  position: relative;
+}
+
+.peer-list-trigger {
+  background: none;
+  border: none;
+  color: var(--muted);
+  font-size: inherit;
+  font-family: inherit;
+  cursor: pointer;
+  padding: 0;
+  text-decoration: underline;
+  text-decoration-color: transparent;
+  transition: text-decoration-color 0.2s ease, color 0.2s ease;
+}
+
+.peer-list-trigger:hover {
+  color: var(--signal);
+  text-decoration-color: var(--signal);
+}
+
+.peer-list-dropdown {
+  position: absolute;
+  top: 130%;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--bg);
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  padding: 0.5rem;
+  min-width: 220px;
+  z-index: 60;
+  box-shadow: 0 12px 28px rgba(0,0,0,0.5);
+}
+
+.peer-list-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: 0.5rem 0.4rem;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+}
+
+.peer-list-row:not(:last-child) {
+  border-bottom: 1px solid var(--line);
+}
+
+.peer-list-disconnect {
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  padding: 0.25rem 0.5rem;
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  background: transparent;
+  color: var(--warm);
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.peer-list-disconnect:hover {
+  border-color: var(--warm);
+  background: rgba(255, 107, 69, 0.08);
+}
